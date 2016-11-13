@@ -1,6 +1,35 @@
-// List.cpp
+// List.hpp
+
+#ifndef LIST_HPP
+#define LIST_HPP
 
 #include <iostream>
+
+template <class T>
+struct Node {
+	T data;
+	Node<T> *next;
+};
+
+template <class T>
+class List {
+	Node<T> *head;
+	Node<T> *tail;
+	int size;
+
+public:
+	List();
+	~List();
+	int getSize();
+	bool isEmpty();
+	void push(T);
+	T pop();
+	void unshift(T);
+	T shift();
+	T operator[](int);
+	void addValueAt(int, int);
+	T deleteAt(int);
+};
 
 template <class T>
 List<T>::List() {
@@ -36,10 +65,10 @@ bool List<T>::isEmpty() {
 template<class T>
 void List<T>::push(T value) {
 	Node<T> *tmp = new Node<T>;
-	tmp.data = value;
-	tmp.next = nullptr;
+	tmp->data = value;
+	tmp->next = nullptr;
 	size++;
-	if (size == 0) {
+	if (size == 1) {
 		head = tail = tmp;
 		return;
 	}
@@ -49,9 +78,9 @@ void List<T>::push(T value) {
 
 template<class T>
 T List<T>::pop() {
-	T result = nullptr;
+	T result = (T)0;
 	if (head) {
-		result = tail.data;
+		result = tail->data;
 		delete tail;
 		size--;
 		if (size == 0) {
@@ -59,9 +88,10 @@ T List<T>::pop() {
 			return result;
 		}
 		tail = head;
-		for (int i = 0; int i < size - 1; int i++) {
+		for (int i = 0; i < size - 1; i++) {
 			tail = tail->next;
 		}
+		tail->next = nullptr;
 	}
 	return result;
 }
@@ -69,8 +99,8 @@ T List<T>::pop() {
 template<class T>
 void List<T>::unshift(T value) {
 	Node<T> *tmp = new Node<T>;
-	tmp.data = value;
-	tmp.next = head;
+	tmp->data = value;
+	tmp->next = head;
 	head = tmp;
 	tmp = nullptr;
 	if (!tail) {
@@ -96,16 +126,16 @@ T List<T>::shift() {
 }
 
 template<class T>
-T & List<T>::operator[](int index) {
+T List<T>::operator[](int index) {
 	if (index < 0 || index > size - 1) {
 		std::cout << "There are no Node with such index\n";
-		return nullptr;
+		return (T)0;
 	}
 	Node<T> *tmp = head;
 	for (int i = 0; i < index; i++) {
 		tmp = tmp->next;
 	}
-	return tmp.data;
+	return tmp->data;
 }
 
 template<class T>
@@ -116,8 +146,8 @@ void List<T>::addValueAt(int value, int index) {
 	}
 	size++;
 	Node<T> *tmp = new Node<T>;
-	tmp.data = value;
-	tmp.next = nullptr;
+	tmp->data = value;
+	tmp->next = nullptr;
 	if (size == 1) {
 		head = tail = tmp;
 		return;
@@ -155,8 +185,10 @@ T List<T>::deleteAt(int index) {
 		before = before->next;
 	}
 	Node<T> *tmp = before->next;
-	T result = tmp.data;
+	T result = tmp->data;
 	before->next = tmp->next;
 	delete tmp;
 	return result;
 }
+
+#endif
